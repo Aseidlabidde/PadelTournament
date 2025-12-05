@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Sequence
+from typing import Sequence, cast
 
 from PyQt6.QtCore import QByteArray, QSettings, Qt, QTimer
 from PyQt6.QtGui import QAction, QCloseEvent, QFont
@@ -13,6 +13,7 @@ from ..core import TournamentState, generate_schedule
 from ..services import RankingResult, compute_rankings
 from ..services.persistence import export_csv, export_pdf, load_payload, save_payload
 from ..themes import DARK_THEME, LIGHT_THEME, load_stylesheet
+from .loaders import load_ui
 from .pages import NamesPage, ScorePage, SetupPage
 
 ScoreTuple = tuple[tuple[str, ...], tuple[str, ...], str, str]
@@ -23,7 +24,7 @@ class TournamentApp(QMainWindow):
 
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("Padel Tournament Manager")
+        load_ui(self, "main_window.ui")
         self.setMinimumSize(980, 720)
 
         self.settings = QSettings("PadelTournament", "Manager")
@@ -39,8 +40,17 @@ class TournamentApp(QMainWindow):
         self.auto_timer.setInterval(300)
         self.auto_timer.timeout.connect(self.update_rankings)
 
-        self.stack = QStackedWidget()
-        self.setCentralWidget(self.stack)
+        self.stack = cast(QStackedWidget, self.findChild(QStackedWidget, "stack"))
+        if self.stack is None:
+            raise RuntimeError("Main window UI is missing the central 'stack' widget")
+
+        self.save_action = cast(QAction, self.findChild(QAction, "save_action"))
+        self.load_action = cast(QAction, self.findChild(QAction, "load_action"))
+        self.csv_action = cast(QAction, self.findChild(QAction, "csv_action"))
+        self.pdf_action = cast(QAction, self.findChild(QAction, "pdf_action"))
+        self.exit_action = cast(QAction, self.findChild(QAction, "exit_action"))
+        self.theme_action = cast(QAction, self.findChild(QAction, "theme_action"))
+        self.auto_action = cast(QAction, self.findChild(QAction, "auto_action"))
 
         self.setup_page = SetupPage()
         self.names_page = NamesPage()
@@ -55,7 +65,7 @@ class TournamentApp(QMainWindow):
             on_auto_toggle=self._handle_auto_toggle,
         )
 
-        self._build_menu()
+        self._wire_actions()
         self._connect_page_events()
 
         self.stack.addWidget(self.setup_page)
@@ -66,43 +76,16 @@ class TournamentApp(QMainWindow):
         self._load_recent_file()
 
     # -- Menu ------------------------------------------------------------
-    def _build_menu(self) -> None:
-        menubar = self.menuBar()
+    def _wire_actions(self) -> None:
+        self.save_action.triggered.connect(self.save_tournament)
+        self.load_action.triggered.connect(self.load_tournament)
+        self.csv_action.triggered.connect(self.export_csv)
+        self.pdf_action.triggered.connect(self.export_pdf)
+        self.exit_action.triggered.connect(self.close)
 
-        file_menu = menubar.addMenu("File")
-        save_action = QAction("Save…", self)
-        save_action.triggered.connect(self.save_tournament)
-        file_menu.addAction(save_action)
-
-        load_action = QAction("Load…", self)
-        load_action.triggered.connect(self.load_tournament)
-        file_menu.addAction(load_action)
-
-        file_menu.addSeparator()
-
-        csv_action = QAction("Export CSV…", self)
-        csv_action.triggered.connect(self.export_csv)
-        file_menu.addAction(csv_action)
-
-        pdf_action = QAction("Export PDF…", self)
-        pdf_action.triggered.connect(self.export_pdf)
-        file_menu.addAction(pdf_action)
-
-        file_menu.addSeparator()
-
-        exit_action = QAction("Exit", self)
-        exit_action.triggered.connect(self.close)
-        file_menu.addAction(exit_action)
-
-        view_menu = menubar.addMenu("View")
-        self.theme_action = QAction("Dark mode", self, checkable=True)
         self.theme_action.triggered.connect(self.toggle_theme)
-        view_menu.addAction(self.theme_action)
-
-        self.auto_action = QAction("Auto-update rankings", self, checkable=True)
-        self.auto_action.setChecked(True)
         self.auto_action.triggered.connect(lambda: self._handle_auto_toggle(self.auto_action.isChecked()))
-        view_menu.addAction(self.auto_action)
+        self.auto_action.setChecked(True)
 
     def _connect_page_events(self) -> None:
         self.setup_page.next_button.clicked.connect(self._handle_setup_next)

@@ -2,14 +2,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable, Iterable, Mapping, Sequence
+from typing import Callable, Iterable, Mapping, Sequence, cast
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QFont
 from PyQt6.QtWidgets import (
     QCheckBox,
     QFrame,
-    QGridLayout,
     QHBoxLayout,
     QHeaderView,
     QLabel,
@@ -30,6 +29,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from ..loaders import load_ui
 from ..widgets.performance_plot import PerformancePlot
 
 
@@ -66,6 +66,8 @@ class ScorePage(QWidget):
         on_auto_toggle: Callable[[bool], None],
     ) -> None:
         super().__init__()
+        load_ui(self, "score_page.ui")
+
         self._score_entries: list[ScoreEntry] = []
         self._on_score_changed = on_score_changed
         self._on_auto_toggle = on_auto_toggle
@@ -75,37 +77,69 @@ class ScorePage(QWidget):
         self._all_players: list[str] = []
         self._is_mobile_layout: bool = True
 
-        self.player_list = QListWidget()
+        self.update_button = cast(QPushButton, self.findChild(QPushButton, "update_button"))
+        self.save_button = cast(QPushButton, self.findChild(QPushButton, "save_button"))
+        self.load_button = cast(QPushButton, self.findChild(QPushButton, "load_button"))
+        self.csv_button = cast(QPushButton, self.findChild(QPushButton, "csv_button"))
+        self.pdf_button = cast(QPushButton, self.findChild(QPushButton, "pdf_button"))
+        self.back_button = cast(QPushButton, self.findChild(QPushButton, "back_button"))
+        self.auto_checkbox = cast(QCheckBox, self.findChild(QCheckBox, "auto_checkbox"))
+        self.analytics_toggle = cast(QToolButton, self.findChild(QToolButton, "analytics_toggle"))
+        self.search_input = cast(QLineEdit, self.findChild(QLineEdit, "search_input"))
+        self.top_spin = cast(QSpinBox, self.findChild(QSpinBox, "top_spin"))
+        self.player_list = cast(QListWidget, self.findChild(QListWidget, "player_list"))
+        self.rank_table = cast(QTableWidget, self.findChild(QTableWidget, "rank_table"))
+        self.scroll_area = cast(QScrollArea, self.findChild(QScrollArea, "scroll_area"))
+        self.matches_host = cast(QWidget, self.findChild(QWidget, "matches_host"))
+        self.matches_layout = cast(QVBoxLayout, self.findChild(QVBoxLayout, "matches_layout"))
+        self.summary_frame = cast(QFrame, self.findChild(QFrame, "summary_frame"))
+        self.summary_stack = cast(QStackedWidget, self.findChild(QStackedWidget, "summary_stack"))
+        self.analytics_tabs = cast(QTabWidget, self.findChild(QTabWidget, "analytics_tabs"))
+        self.analytics_cover = cast(QWidget, self.findChild(QWidget, "analytics_cover"))
+        self.layout_stack = cast(QStackedWidget, self.findChild(QStackedWidget, "layout_stack"))
+        self.desktop_container = cast(QWidget, self.findChild(QWidget, "desktop_container"))
+        self.mobile_container = cast(QWidget, self.findChild(QWidget, "mobile_container"))
+        self.mobile_layout = cast(QVBoxLayout, self.findChild(QVBoxLayout, "mobile_layout"))
+        self.splitter = cast(QSplitter, self.findChild(QSplitter, "splitter"))
+
+        plot_placeholder = cast(QWidget, self.findChild(QWidget, "plot_placeholder"))
+        plot_layout = cast(QVBoxLayout, plot_placeholder.layout()) if plot_placeholder is not None else None
+        self.plot_canvas = PerformancePlot(self, width=8, height=5, dpi=110)
+        self.plot_canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.plot_canvas.setMinimumSize(520, 320)
+        if plot_layout is not None:
+            plot_layout.addWidget(self.plot_canvas)
+
+        title = cast(QLabel, self.findChild(QLabel, "title_label"))
+        if title is not None:
+            title.setObjectName("pageTitle")
+            title.setFont(QFont("Segoe UI", 20, QFont.Weight.Bold))
+
+        plot_label = cast(QLabel, self.findChild(QLabel, "plot_label"))
+        if plot_label is not None:
+            plot_label.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
+
+        self.summary_frame.setObjectName("summaryPanel")
+        self.summary_frame.setMinimumWidth(320)
+        self.back_button.setObjectName("secondaryButton")
+
+        if self.matches_layout is not None:
+            self.matches_layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
+
         self.player_list.setObjectName("playerPlotList")
         self.player_list.setMaximumWidth(180)
         self.player_list.itemChanged.connect(self._handle_player_toggle)
 
-        self.update_button = QPushButton("Update Rankings")
-        self.save_button = QPushButton("Save")
-        self.load_button = QPushButton("Load")
-        self.csv_button = QPushButton("Export CSV")
-        self.pdf_button = QPushButton("Export PDF")
-        self.back_button = QPushButton("Back to Setup")
-        self.auto_checkbox = QCheckBox("Auto-update")
-        self.analytics_toggle = QToolButton()
         self.analytics_toggle.setObjectName("analyticsToggle")
-        self.analytics_toggle.setCheckable(True)
-        self.analytics_toggle.setText("Show analytics")
         self.analytics_toggle.setToolTip("Show or hide the rankings and performance chart panel.")
         self.analytics_toggle.toggled.connect(self._toggle_analytics_panel)
 
-        self.search_input = QLineEdit()
-        self.search_input.setPlaceholderText("Search player…")
         self.search_input.setClearButtonEnabled(True)
         self.search_input.textChanged.connect(self._apply_rankings_filter)
+        self.search_input.setMinimumWidth(140)
 
-        self.top_spin = QSpinBox()
-        self.top_spin.setMinimum(0)
-        self.top_spin.setMaximum(999)
-        self.top_spin.setValue(0)
-        self.top_spin.setPrefix("Top ")
-        self.top_spin.setSpecialValueText("All players")
         self.top_spin.setToolTip("Limit the rankings table to the top N players (0 shows everyone).")
+        self.top_spin.setMinimumWidth(80)
         self.top_spin.valueChanged.connect(self._apply_rankings_filter)
 
         self.update_button.clicked.connect(on_update_rankings)
@@ -116,7 +150,7 @@ class ScorePage(QWidget):
         self.back_button.clicked.connect(on_back)
         self.auto_checkbox.stateChanged.connect(self._handle_auto_toggled)
 
-        self.rank_table = QTableWidget(0, 5)
+        self.rank_table.setColumnCount(5)
         self.rank_table.setHorizontalHeaderLabels(["Place", "Player", "Points", "Wins", "Losses"])
         header = self.rank_table.horizontalHeader()
         if header is not None:
@@ -128,149 +162,18 @@ class ScorePage(QWidget):
         self.rank_table.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.rank_table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
 
-        self.scroll_area = QScrollArea()
-        self.scroll_area.setWidgetResizable(True)
-        self.matches_host = QWidget()
-        self.matches_layout = QVBoxLayout(self.matches_host)
-        self.matches_layout.setSpacing(12)
-        self.matches_layout.setContentsMargins(24, 16, 24, 32)
-        self.matches_layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
-        self.scroll_area.setWidget(self.matches_host)
         self.scroll_area.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop)
 
-        self.plot_canvas = PerformancePlot(self, width=8, height=5, dpi=110)
-        self.plot_canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        self.plot_canvas.setMinimumSize(520, 320)
-
-        self.summary_stack: QStackedWidget | None = None
-        self.analytics_cover: QWidget | None = None
-
-        self._build_ui()
-
-    # -- UI construction -------------------------------------------------
-    def _build_ui(self) -> None:
-        layout = QVBoxLayout(self)
-        layout.setSpacing(16)
-
-        title = QLabel("Schedule & Scoring")
-        title.setObjectName("pageTitle")
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setFont(QFont("Segoe UI", 20, QFont.Weight.Bold))
-        layout.addWidget(title)
-
-        controls = QHBoxLayout()
-        controls.setSpacing(10)
-        for button in (self.update_button, self.save_button, self.load_button, self.csv_button, self.pdf_button):
-            controls.addWidget(button)
-        controls.addStretch(1)
-        self.set_auto_checked(True)
-        controls.addWidget(self.auto_checkbox)
-        controls.addWidget(self.analytics_toggle)
-        layout.addLayout(controls)
-
-        self.summary_frame = QFrame()
-        self.summary_frame.setObjectName("summaryPanel")
-        self.summary_frame.setMinimumWidth(320)
-
-        summary_layout = QVBoxLayout(self.summary_frame)
-        summary_layout.setSpacing(0)
-        summary_layout.setContentsMargins(12, 12, 12, 24)
-
-        self.analytics_tabs = QTabWidget()
-        self.analytics_tabs.setObjectName("analyticsTabs")
-
-        rankings_tab = QWidget()
-        rankings_layout = QVBoxLayout(rankings_tab)
-        rankings_layout.setSpacing(4)
-        rankings_layout.setContentsMargins(16, 0, 16, 12)
-        filter_widget = QWidget()
-        filter_layout = QHBoxLayout(filter_widget)
-        filter_layout.setContentsMargins(0, 5, 0, 5)
-        filter_layout.setSpacing(8)
-        filter_label = QLabel("Filter:")
-        filter_layout.addWidget(filter_label)
-        filter_layout.addWidget(self.search_input)
-        filter_layout.addWidget(self.top_spin)
-        filter_label.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft)
-        self.search_input.setMinimumWidth(140)
-        self.top_spin.setMinimumWidth(80)
-        rankings_layout.addWidget(filter_widget)
-        rankings_layout.addWidget(self.rank_table, 1)
-
-        plot_tab = QWidget()
-        plot_layout = QGridLayout(plot_tab)
-        plot_layout.setContentsMargins(16, 12, 16, 12)
-        plot_layout.setHorizontalSpacing(16)
-        plot_layout.setVerticalSpacing(12)
-        plot_label = QLabel("Graph players")
-        plot_label.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
-        plot_layout.addWidget(plot_label, 0, 0, 1, 2)
-        plot_layout.addWidget(self.player_list, 1, 0)
-        plot_layout.addWidget(self.plot_canvas, 1, 1)
-        plot_layout.setColumnStretch(0, 0)
-        plot_layout.setColumnStretch(1, 1)
-        plot_layout.setRowStretch(1, 1)
-
-        self.analytics_tabs.addTab(rankings_tab, "Rankings")
-        self.analytics_tabs.addTab(plot_tab, "Performance chart")
-
-        self.summary_stack = QStackedWidget()
-        self.summary_stack.setObjectName("analyticsStack")
-        self.summary_stack.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        self.summary_stack.addWidget(self.analytics_tabs)
-
-        self.analytics_cover = QWidget()
-        self.analytics_cover.setObjectName("analyticsCover")
-        self.analytics_cover.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        cover_layout = QVBoxLayout(self.analytics_cover)
-        cover_layout.setContentsMargins(24, 24, 24, 24)
-        cover_layout.addStretch(1)
-        cover_label = QLabel("Analytics are hidden")
-        cover_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        cover_label.setWordWrap(True)
-        cover_label.setObjectName("analyticsCoverLabel")
-        secondary_label = QLabel("Use 'Show analytics' to reveal rankings and charts again.")
-        secondary_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        secondary_label.setWordWrap(True)
-        secondary_label.setObjectName("analyticsCoverHint")
-        cover_layout.addWidget(cover_label)
-        cover_layout.addSpacing(8)
-        cover_layout.addWidget(secondary_label)
-        cover_layout.addStretch(1)
-        self.summary_stack.addWidget(self.analytics_cover)
-
-        summary_layout.addWidget(self.summary_stack)
-
-        self.layout_stack = QStackedWidget()
-        self.layout_stack.setObjectName("scoreLayoutStack")
-
-        self.desktop_container = QWidget()
-        desktop_layout = QVBoxLayout(self.desktop_container)
-        desktop_layout.setContentsMargins(0, 0, 0, 0)
-        self.splitter = QSplitter(Qt.Orientation.Horizontal)
         self.splitter.setStretchFactor(0, 7)
         self.splitter.setStretchFactor(1, 13)
-        desktop_layout.addWidget(self.splitter)
 
-        self.mobile_container = QWidget()
-        self.mobile_layout = QVBoxLayout(self.mobile_container)
-        self.mobile_layout.setContentsMargins(0, 0, 0, 0)
-        self.mobile_layout.setSpacing(12)
-
-        self.layout_stack.addWidget(self.desktop_container)
-        self.layout_stack.addWidget(self.mobile_container)
-
-        layout.addWidget(self.layout_stack)
-
-        self.back_button.setObjectName("secondaryButton")
-        layout.addWidget(self.back_button, alignment=Qt.AlignmentFlag.AlignLeft)
-        layout.addStretch(1)
-
-        self._apply_layout_mode(False)
         self.analytics_toggle.setChecked(True)
-        if self.summary_stack is not None:
-            self.summary_stack.setCurrentWidget(self.analytics_tabs)
+        self.summary_stack.setCurrentWidget(self.analytics_tabs)
+
+        self.set_auto_checked(True)
+        self._apply_layout_mode(False)
         self._sync_analytics_cover_size()
+
 
     # -- Match cards -----------------------------------------------------
     def populate_matches(self, matches: Sequence[Sequence[tuple[str, ...]]]) -> None:

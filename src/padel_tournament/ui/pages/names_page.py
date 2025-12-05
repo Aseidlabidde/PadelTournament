@@ -1,19 +1,12 @@
 """Player name entry page."""
 from __future__ import annotations
 
-from typing import Iterable
+from typing import Iterable, cast
 
-from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import (
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QPushButton,
-    QScrollArea,
-    QVBoxLayout,
-    QWidget,
-)
+from PyQt6.QtWidgets import QLabel, QLineEdit, QPushButton, QScrollArea, QVBoxLayout, QWidget
+
+from ..loaders import load_ui
 
 
 class NamesPage(QWidget):
@@ -21,40 +14,22 @@ class NamesPage(QWidget):
 
     def __init__(self) -> None:
         super().__init__()
+        load_ui(self, "names_page.ui")
+
         self._name_inputs: list[QLineEdit] = []
-        self.generate_button = QPushButton("Generate Schedule")
-        self.back_button = QPushButton("Back")
+        self.generate_button = cast(QPushButton, self.findChild(QPushButton, "generate_button"))
+        self.back_button = cast(QPushButton, self.findChild(QPushButton, "back_button"))
+        self.names_scroll = cast(QScrollArea, self.findChild(QScrollArea, "names_scroll"))
+        self.names_container = cast(QWidget, self.findChild(QWidget, "names_container"))
+        self.names_layout = cast(QVBoxLayout, self.findChild(QVBoxLayout, "names_layout"))
 
-        self._build_ui()
+        title = cast(QLabel, self.findChild(QLabel, "title_label"))
+        if title is not None:
+            title.setObjectName("pageTitle")
+            title.setFont(QFont("Segoe UI", 20, QFont.Weight.Bold))
 
-    def _build_ui(self) -> None:
-        layout = QVBoxLayout(self)
-        layout.setSpacing(16)
-
-        title = QLabel("Enter Player Names")
-        title.setObjectName("pageTitle")
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setFont(QFont("Segoe UI", 20, QFont.Weight.Bold))
-        layout.addWidget(title)
-
-        self.names_container = QWidget()
-        self.names_layout = QVBoxLayout(self.names_container)
-        self.names_layout.setSpacing(8)
-        self.names_layout.setContentsMargins(12, 12, 12, 12)
-
-        self.names_scroll = QScrollArea()
-        self.names_scroll.setWidgetResizable(True)
-        self.names_scroll.setObjectName("namesScrollArea")
-        self.names_scroll.setWidget(self.names_container)
-        layout.addWidget(self.names_scroll)
-
-        layout.addWidget(self.generate_button)
-
-        back_layout = QHBoxLayout()
-        self.back_button.setObjectName("secondaryButton")
-        back_layout.addWidget(self.back_button)
-        back_layout.addStretch(1)
-        layout.addLayout(back_layout)
+        if self.back_button is not None:
+            self.back_button.setObjectName("secondaryButton")
 
     def populate_inputs(self, count: int, preset_names: Iterable[str] | None = None) -> None:
         self.clear_inputs()
