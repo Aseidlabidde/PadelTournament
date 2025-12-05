@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "padel-tournament"
+version = "0.1.0"
+description = "PyQt-based padel tournament manager"
+authors = [{ name = "Your Name" }]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "PyQt6",
+    "matplotlib",
+]
+
+[project.scripts]
+padel-tournament = "padel_tournament:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

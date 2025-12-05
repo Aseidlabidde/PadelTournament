@@ -1,0 +1,132 @@
+/* Fluent-inspired dark theme */
+QWidget {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 13px;
+}
+
+QLabel#pageTitle {
+    font-size: 22px;
+    font-weight: 600;
+    color: #f1f5f9;
+}
+
+QPushButton {
+    background-color: #38bdf8;
+    color: #0f172a;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+}
+
+QPushButton:hover {
+    background-color: #0ea5e9;
+}
+
+QPushButton:pressed {
+    background-color: #0284c7;
+}
+
+QPushButton#secondaryButton {
+    background-color: transparent;
+    color: #e2e8f0;
+    border: 1px solid #334155;
+}
+
+QToolButton#analyticsToggle {
+    background-color: transparent;
+    color: #e2e8f0;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-weight: 600;
+}
+
+QToolButton#analyticsToggle:checked {
+    background-color: #38bdf8;
+    color: #0f172a;
+    border-color: #38bdf8;
+}
+
+QListWidget#playerPlotList {
+    background-color: #111c30;
+    border: 1px solid #1f2e4a;
+    border-radius: 8px;
+    padding: 6px;
+}
+
+QLineEdit {
+    background-color: #111c30;
+    border: 1px solid #1e2b44;
+    padding: 6px 8px;
+    border-radius: 8px;
+    selection-background-color: #38bdf8;
+    selection-color: #0f172a;
+}
+
+QLineEdit:focus {
+    border: 2px solid #38bdf8;
+}
+
+QScrollArea {
+    border: none;
+    background: transparent;
+}
+
+QFrame#matchCard {
+    background-color: #15213a;
+    border-radius: 14px;
+    border: 1px solid #1f2e4a;
+    padding: 16px;
+    margin-bottom: 10px;
+}
+
+QFrame#summaryPanel {
+    background-color: #111c30;
+    border-radius: 14px;
+    border: 1px solid #1f2e4a;
+}
+
+QFrame#lineSeparator {
+    color: #1f2e4a;
+    background-color: #1f2e4a;
+    max-height: 1px;
+}
+
+QTableWidget {
+    background-color: #111c30;
+    border: 1px solid #1f2e4a;
+    border-radius: 12px;
+    gridline-color: #1f2e4a;
+    selection-background-color: #38bdf8;
+    selection-color: #0f172a;
+    alternate-background-color: #15213a;
+}
+
+QHeaderView::section {
+    background-color: #1f2e4a;
+    color: #e2e8f0;
+    padding: 6px;
+    border: none;
+    font-weight: 600;
+}
+
+QCheckBox {
+    padding: 2px;
+}
+
+QStatusBar, QMenuBar {
+    background-color: #1e2b44;
+    border: none;
+}
+
+QMenu {
+    background-color: #111c30;
+    border: 1px solid #1f2e4a;
+}
+
+QMenu::item:selected {
+    background-color: #1e3a5f;
+}
