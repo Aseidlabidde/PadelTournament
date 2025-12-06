@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AnalyticsPanel</class>
+ <widget class="QFrame" name="summary_frame">
+  <property name="frameShape">
+   <enum>QFrame::StyledPanel</enum>
+  </property>
+  <layout class="QVBoxLayout" name="summaryLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QStackedWidget" name="summary_stack">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="analytics_page">
+      <layout class="QVBoxLayout" name="analyticsLayout">
+       <item>
+        <widget class="QTabWidget" name="analytics_tabs">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="rankings_tab">
+          <attribute name="title">
+           <string>Rankings</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="rankingsLayout">
+           <item>
+            <widget class="QWidget" name="filter_widget">
+             <layout class="QHBoxLayout" name="filterLayout">
+              <property name="spacing">
+               <number>8</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="filter_label">
+                <property name="text">
+                 <string>Filter:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="search_input">
+                <property name="placeholderText">
+                 <string>Search player…</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="filterStretchSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTableWidget" name="rank_table">
+             <property name="columnCount">
+              <number>5</number>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarAsNeeded</enum>
+             </property>
+             <property name="verticalScrollBarPolicy">
+              <enum>Qt::ScrollBarAsNeeded</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="plot_tab">
+          <attribute name="title">
+           <string>Graph</string>
+          </attribute>
+          <layout class="QGridLayout" name="plotLayout">
+           <property name="horizontalSpacing">
+            <number>16</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>12</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="plot_label">
+             <property name="text">
+              <string>Player Performance</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <spacer name="plotHeaderSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="0" column="2">
+            <widget class="QToolButton" name="line_toggle">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Connect points</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QPushButton" name="plot_graph_button">
+             <property name="minimumSize">
+              <size>
+               <width>140</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>140</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Plot graph</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QWidget" name="player_list_container">
+             <layout class="QVBoxLayout" name="playerListLayout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QWidget" name="player_filter_widget">
+                <layout class="QHBoxLayout" name="playerFilterLayout">
+                 <property name="spacing">
+                  <number>6</number>
+                 </property>
+                 <property name="margin">
+                  <number>0</number>
+                 </property>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QListWidget" name="player_list"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QWidget" name="plot_placeholder">
+             <layout class="QVBoxLayout" name="plotPlaceholderLayout"/>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="plot_tab_2">
+          <attribute name="title">
+           <string>Bar</string>
+          </attribute>
+          <layout class="QGridLayout" name="plot2Layout">
+           <property name="horizontalSpacing">
+            <number>16</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>12</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="plot2_label">
+             <property name="text">
+              <string>Player Performance</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <spacer name="barHeaderSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="plot_bars_button">
+             <property name="minimumSize">
+              <size>
+               <width>140</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>140</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Plot bars</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QWidget" name="bar_player_list_container">
+             <layout class="QVBoxLayout" name="barPlayerListLayout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QWidget" name="bar_player_filter_widget">
+                <layout class="QHBoxLayout" name="barPlayerFilterLayout">
+                 <property name="spacing">
+                  <number>6</number>
+                 </property>
+                 <property name="margin">
+                  <number>0</number>
+                 </property>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QListWidget" name="bar_player_list"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="1" column="1" colspan="2">
+            <widget class="QWidget" name="plot2_placeholder">
+             <layout class="QVBoxLayout" name="plot2PlaceholderLayout"/>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="analytics_cover">
+      <layout class="QVBoxLayout" name="coverLayout">
+       <item>
+        <spacer name="coverTopSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="cover_label">
+         <property name="text">
+          <string>Analytics are hidden</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="cover_hint">
+         <property name="text">
+          <string>Use 'Show analytics' to reveal rankings and charts again.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="coverBottomSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

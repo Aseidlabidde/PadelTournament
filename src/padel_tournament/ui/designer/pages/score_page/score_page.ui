@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ScorePage</class>
+ <widget class="QWidget" name="ScorePage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>960</width>
+    <height>720</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="mainLayout">
+   <property name="spacing">
+    <number>16</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="title_label">
+     <property name="text">
+      <string>Schedule &amp; Scoring</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="controlsLayout">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="update_button">
+       <property name="text">
+        <string>Update Rankings</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="save_button">
+       <property name="text">
+        <string>Save</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="load_button">
+       <property name="text">
+        <string>Load</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="csv_button">
+       <property name="text">
+        <string>Export CSV</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pdf_button">
+       <property name="text">
+        <string>Export PDF</string>
+       </property>
+      </widget>
+     </item>
+        <item>
+         <widget class="QPushButton" name="back_button">
+            <property name="text">
+             <string>Back to Setup</string>
+            </property>
+         </widget>
+        </item>
+     <item>
+      <spacer name="controlsSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="auto_checkbox">
+       <property name="text">
+        <string>Auto-update</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="analytics_toggle">
+       <property name="text">
+        <string>Show analytics</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="layout_stack">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="desktop_container">
+      <layout class="QVBoxLayout" name="desktopLayout">
+       <item>
+        <widget class="QSplitter" name="splitter">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <widget class="QScrollArea" name="scroll_area">
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="matches_host">
+           <layout class="QVBoxLayout" name="matches_layout">
+            <property name="spacing">
+             <number>12</number>
+            </property>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="analytics_slot">
+          <layout class="QVBoxLayout" name="analyticsSlotLayout">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="mobile_container">
+      <layout class="QVBoxLayout" name="mobile_layout">
+       <property name="spacing">
+        <number>12</number>
+       </property>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -3,13 +3,23 @@ QWidget {
     background-color: #0f172a;
     color: #e2e8f0;
     font-family: "Segoe UI", Arial, sans-serif;
-    font-size: 13px;
+    font-size: 10pt;
 }
 
 QLabel#pageTitle {
-    font-size: 22px;
+    font-size: 16pt;
     font-weight: 600;
     color: #f1f5f9;
+}
+
+QLabel#plotLabel {
+    font-size: 10pt;
+    font-weight: 600;
+}
+
+QLabel#matchHeader {
+    font-size: 11pt;
+    font-weight: 600;
 }
 
 QPushButton {
@@ -35,7 +45,8 @@ QPushButton#secondaryButton {
     border: 1px solid #334155;
 }
 
-QToolButton#analyticsToggle {
+QToolButton#analyticsToggle,
+QToolButton#lineToggle {
     background-color: transparent;
     color: #e2e8f0;
     border: 1px solid #334155;
@@ -44,7 +55,8 @@ QToolButton#analyticsToggle {
     font-weight: 600;
 }
 
-QToolButton#analyticsToggle:checked {
+QToolButton#analyticsToggle:checked,
+QToolButton#lineToggle:checked {
     background-color: #38bdf8;
     color: #0f172a;
     border-color: #38bdf8;

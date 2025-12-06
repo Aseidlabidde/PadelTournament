@@ -7,7 +7,7 @@ from typing import Sequence, cast
 
 from PyQt6.QtCore import QByteArray, QSettings, Qt, QTimer
 from PyQt6.QtGui import QAction, QCloseEvent, QFont
-from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QStackedWidget
+from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QStackedWidget, QVBoxLayout
 
 from ..core import TournamentState, generate_schedule
 from ..services import RankingResult, compute_rankings
@@ -24,8 +24,12 @@ class TournamentApp(QMainWindow):
 
     def __init__(self) -> None:
         super().__init__()
-        load_ui(self, "main_window.ui")
+        load_ui(self, "pages/main_window/main_window.ui")
         self.setMinimumSize(980, 720)
+
+        central_layout = cast(QVBoxLayout, self.findChild(QVBoxLayout, "centralLayout"))
+        if central_layout is not None:
+            central_layout.setContentsMargins(0, 0, 0, 0)
 
         self.settings = QSettings("PadelTournament", "Manager")
         self.current_theme = LIGHT_THEME
@@ -89,7 +93,6 @@ class TournamentApp(QMainWindow):
 
     def _connect_page_events(self) -> None:
         self.setup_page.next_button.clicked.connect(self._handle_setup_next)
-        self.setup_page.example_button.clicked.connect(self._load_example)
         self.setup_page.load_button.clicked.connect(self.load_tournament)
         self.setup_page.clear_button.clicked.connect(self._clear_setup)
 
@@ -130,13 +133,6 @@ class TournamentApp(QMainWindow):
 
         preset_names = self.state.names if len(self.state.names) == player_count else []
         self.names_page.populate_inputs(player_count, preset_names)
-        self._navigate_to_names()
-
-    def _load_example(self) -> None:
-        self.setup_page.set_player_count(8)
-        self.setup_page.set_team_size(2)
-        self.setup_page.set_court_count(2)
-        self.names_page.populate_inputs(8, [f"Player {i}" for i in range(1, 9)])
         self._navigate_to_names()
 
     def _handle_generate_schedule(self) -> None:

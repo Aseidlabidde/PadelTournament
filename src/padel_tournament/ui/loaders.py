@@ -26,7 +26,7 @@ def load_ui(widget: QWidget, resource: str) -> None:
     widget:
         The widget instance that should be populated with the UI definition.
     resource:
-        Filename of the .ui file stored under ``padel_tournament/ui/designer``.
+        Relative path of the .ui file stored under ``padel_tournament/ui/designer``.
     """
 
     with _ui_path(resource) as ui_path:

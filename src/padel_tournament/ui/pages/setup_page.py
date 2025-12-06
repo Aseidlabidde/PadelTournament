@@ -3,8 +3,8 @@ from __future__ import annotations
 
 from typing import cast
 
-from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import QLabel, QLineEdit, QPushButton, QWidget
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QFormLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget
 
 from ..loaders import load_ui
 
@@ -14,25 +14,35 @@ class SetupPage(QWidget):
 
     def __init__(self) -> None:
         super().__init__()
-        load_ui(self, "setup_page.ui")
+        load_ui(self, "pages/setup_page/setup_page.ui")
 
         self.num_players_edit = cast(QLineEdit, self.findChild(QLineEdit, "num_players_edit"))
         self.team_size_edit = cast(QLineEdit, self.findChild(QLineEdit, "team_size_edit"))
         self.court_count_edit = cast(QLineEdit, self.findChild(QLineEdit, "court_count_edit"))
         self.next_button = cast(QPushButton, self.findChild(QPushButton, "next_button"))
         self.load_button = cast(QPushButton, self.findChild(QPushButton, "load_button"))
-        self.example_button = cast(QPushButton, self.findChild(QPushButton, "example_button"))
         self.clear_button = cast(QPushButton, self.findChild(QPushButton, "clear_button"))
+        self.main_layout = cast(QVBoxLayout, self.findChild(QVBoxLayout, "mainLayout"))
+        self.form_container = cast(QHBoxLayout, self.findChild(QHBoxLayout, "formContainer"))
+        self.form_layout = cast(QFormLayout, self.findChild(QFormLayout, "formLayout"))
+        self.button_layout = cast(QHBoxLayout, self.findChild(QHBoxLayout, "buttonLayout"))
 
         # Apply styling hints that are easier to manage in code for now.
         title = cast(QLabel, self.findChild(QLabel, "title_label"))
         if title is not None:
             title.setObjectName("pageTitle")
-            title.setFont(QFont("Segoe UI", 22, QFont.Weight.Bold))
 
-        for button in (self.load_button, self.example_button, self.clear_button):
+        for button in (self.load_button, self.clear_button):
             if button is not None:
                 button.setObjectName("secondaryButton")
+
+        if self.button_layout is not None:
+            self.button_layout.setSpacing(4)
+
+        if self.main_layout is not None and self.form_container is not None:
+            self.main_layout.setAlignment(self.form_container, Qt.AlignmentFlag.AlignHCenter)
+        if self.main_layout is not None and self.button_layout is not None:
+            self.main_layout.setAlignment(self.button_layout, Qt.AlignmentFlag.AlignHCenter)
 
     def get_player_count_text(self) -> str:
         return self.num_players_edit.text().strip()
